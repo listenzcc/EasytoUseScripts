@@ -22,7 +22,7 @@ function Start-Bgd-Job {
     }
 }
 
-function Remove-All-Jobs {
+function Remove-Bgd-Jobs {
     # Remove all jobs by force
     # It means kill the job and remove it from the pool
     Write-Output 'Before:'
@@ -32,14 +32,25 @@ function Remove-All-Jobs {
     Get-Job
 }
 
-function Find-Files-By ($ext, $depth) {
+function Find-Files-By ($ext, $depth, $combine) {
     # Find all the files ends with $ext
+    # if not provide $depth,
+    # we will use 3 for instead.
+
+    if ($depth.length -eq 0) {
+        $depth = 3
+    }
+
     if ($ext.length -eq 0) {
-        Write-Output 'Find all the files ends with $ext, $depth'
-        Write-Output 'Please provide the extension to find them'
+        Write-Output 'Invalid input, Example input is "Find-Files-By $ext[, $depth]"'
     }
     else {
-        Get-ChildItem -depth $depth -Recurse | Sort-Object LastAccessTime | Where-Object { $_.Extension -eq $ext } | Select-Object LastAccessTime, FullName
+        if ($combine -eq 0) {
+            Get-ChildItem -depth $depth -Recurse | Where-Object { $_.Extension -eq $ext } | Sort-Object FullName
+        }
+        else {
+            Get-ChildItem -depth $depth -Recurse | Where-Object { $_.Extension -eq $ext } | Sort-Object FullName | Select-Object LastWriteTime, fullname
+        }
     }
 }
 
@@ -49,4 +60,13 @@ function Invoke-CapsLockPlus () {
     Invoke-Command -ScriptBlock { set-location $env:HOME\Documents\capslock-plus; .\CapsLock+.ahk }
 }
 
-Write-Output 'Custom Apps have been loaded.'
+function MyFunctions() {
+    # List all my custom functions
+    Write-Output "MyServer            `t: Access to my Server Quickly"
+    Write-Output "Start-Bgd-job       `t: Start Background Job"
+    Write-Output "Remove-Bgd-Jobs     `t: Remove All Background Jobs"
+    Write-Output "Find-Files-By       `t: Find Subfiles with their Extensions"
+    write-Output "Invoke-CapsLockPlus `t: Invoke CapsLockPlus"
+}
+
+Write-Output 'Custom Apps have been loaded, type "MyFunctions" to see them.'
