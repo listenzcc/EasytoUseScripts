@@ -1,3 +1,4 @@
+# %%
 import os
 
 readme = os.path.join(os.path.dirname(__file__), 'README.md')
@@ -14,11 +15,13 @@ def read_all(folder):
             read_all(full)
 
         # Read it
-        if e == '__init__.py':
+        if e == 'readme.md':
             content.append(open(full).read())
 
 
 read_all(os.path.dirname(__file__))
 
 with open(readme, 'w') as f:
-    f.write('\n'.join([e.split("'''")[1] for e in content]))
+    f.write('\n'.join([e for e in content]))
+
+# %%
