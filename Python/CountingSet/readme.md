@@ -41,7 +41,7 @@ for j in range(15):
     cs.add('c', 3)
 
 # Get the sorted values
-print(cs.get_as_list())
-print(cs.get_as_list(reverse=False))
+print(cs.to_list())
+print(cs.to_list(reverse=False))
 print(cs.total)
 ```

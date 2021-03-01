@@ -49,7 +49,7 @@ class CountingSet(object):
         # Return the counting
         return self.cdict[value]
 
-    def get_as_list(self, reverse=True):
+    def to_list(self, reverse=True):
         '''Get all values as a list,
         the order is based on the function of [sort]
 
@@ -74,11 +74,14 @@ if False:
         cs.add('a')
 
     for j in range(20):
-        cs.add('b')
+        cs.add('b', 2)
 
     for j in range(15):
-        cs.add('c')
+        cs.add('c', 3)
 
-    cs.get_as_list()
+    print(cs.to_list())
+    print(cs.to_list(reverse=False))
+    print(cs.total)
+
 
 # %%
