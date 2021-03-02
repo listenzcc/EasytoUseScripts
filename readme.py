@@ -15,7 +15,7 @@ def read_all(folder):
             read_all(full)
 
         # Read it
-        if e == 'readme.md':
+        if e.endswith('.md'):
             content.append(open(full).read())
 
 
