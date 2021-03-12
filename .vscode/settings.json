@@ -1,6 +1,8 @@
 {
     "cSpell.words": [
         "cdict",
-        "configparser"
+        "configparser",
+        "fpath",
+        "iloc"
     ]
 }
