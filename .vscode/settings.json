@@ -1,8 +1,13 @@
 {
     "cSpell.words": [
+        "Showndown",
         "cdict",
+        "codehighlight",
         "configparser",
         "fpath",
-        "iloc"
+        "highlightjs",
+        "htmlunencode",
+        "iloc",
+        "katex"
     ]
 }
