@@ -122,6 +122,9 @@ function Get-LocationTrace {
     }
 
     # Interaction
+    # If user input nothing for $select,
+    # the default $path value will be null,
+    # thus the location will be not changed
     $select = Read-Host -Prompt 'CD to'
     $path = $lst[$lst.Length - $select]
     Write-Output $path
@@ -132,7 +135,7 @@ $ScriptPath = $script:MyInvocation.MyCommand.Path
 
 Set-Item Alias:cd Set-Location-MyEnhance
 Set-Alias cdt Get-LocationTrace
-Update-TypeData -AppendPath $ScriptPath\\..\\type\\fileTypeEnhance.ps1xml -verbose
+Update-TypeData -AppendPath $ScriptPath\\..\\type\\fileTypeEnhance.ps1xml # -verbose
 
 function MyFunctions() {
     # The script is
