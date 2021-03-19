@@ -1,14 +1,22 @@
-# Parameters
 
-# Function
+function Search-Everything {
+    # Search files using everything
+    [cmdletBinding()]
+    param (
+        $search = ".md"
+        , $path = "."
+    )
+    everything -search $search -path $path
+}
+
 function MyServer {
     # Login to $ServerIP as $ServerUser
     # $args commands will be operated if being provided
     [cmdletBinding()]
     param (
-        $User = $serverUser
+        $Cmd = ''
+        , $User = $serverUser
         , $Ip = $serverIP
-        , $Cmd
     )
     Write-Output "ssh -l $User $Ip $Cmd"
     ssh -l $User $Ip $Cmd
@@ -141,6 +149,7 @@ function MyFunctions() {
     # The script is
     Write-Output "Script is $ScriptPath"
     # List all my custom functions
+    Write-Output "Search-Everything       `t: Search files using everything"
     Write-Output "MyServer                `t: Access my Server Quickly"
     Write-Output "Start-Bgd-job           `t: Start Background Job"
     Write-Output "Remove-Bgd-Jobs         `t: Remove All Background Jobs"
