@@ -43,3 +43,11 @@ The contains of the project|package|folder.
 
 The code block.
 ```
+
+### Git commands
+
+- Add files to latest commit
+
+```sh
+git commit --amend --no-edit
+```

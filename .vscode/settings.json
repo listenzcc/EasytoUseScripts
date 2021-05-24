@@ -9,5 +9,7 @@
         "htmlunencode",
         "iloc",
         "katex"
-    ]
+    ],
+    "python.pythonPath": "C:\\Users\\liste\\anaconda3\\python.exe",
+    "cSpell.enabled": true
 }
