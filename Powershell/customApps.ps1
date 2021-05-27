@@ -86,6 +86,30 @@ function Get-ChildItem-MyEnhance {
     $gc | Select-Object Mode, LastWriteTime, FileSize, @{Name = "RelativeName"; Expression = { (resolve-path -relative $_.fullname).Replace(".\", "") } }
 }
 
+# Load and Save Command History
+$HistoryPath = "$env:USERPROFILE\PSHistory.csv"
+$saveHistoryScriptBlock = {
+    Get-History | Select-Object -Last 100 | Export-Csv -Path "${HistoryPath}"
+}
+If (Test-Path "${HistoryPath}") {
+    Import-Csv "${HistoryPath}" | Add-History
+}
+Register-EngineEvent -SourceIdentifier powershell.exiting -SupportEvent -Action $saveHistoryScriptBlock
+
+# Execute History Command
+function Invoke-HistoryMyEnhance {
+    param($cmd)
+    Write-Output Excuting: $cmd
+    Invoke-Expression $cmd
+}
+
+$getHistoryScriptBlock = {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+    return Get-History | Sort-Object -Descending | Where-Object { $_.CommandLine -like "$wordToComplete*" }
+}
+Register-ArgumentCompleter -CommandName Invoke-HistoryMyEnhance -ParameterName 'cmd' -ScriptBlock $getHistoryScriptBlock
+
+
 function Set-Location-MyEnhance {
     # Require,
     # module: cd-extras
@@ -102,11 +126,15 @@ function Set-Location-MyEnhance {
         # Default $Path
         [Parameter(ParameterSetName = 'Path', Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string] ${Path}
-        # $Path = '~'
     )
 
     # CD to $Path and prompt
-    Set-LocationEx $Path
+    if ($Path) {
+        Set-LocationEx $Path
+    }
+    else {
+        Set-LocationEx ~
+    }
     $path = $pwd.path
     write-output "Changed location to $path"
 
@@ -114,7 +142,6 @@ function Set-Location-MyEnhance {
     # into the END of the file
     $path >> $env:HOME/.cd-trace
 }
-
 
 function Get-LocationTrace {
     # Require,
@@ -147,6 +174,7 @@ function Get-LocationTrace {
     Write-Output $path
     Set-Location-MyEnhance $path
 }
+
 Function Get-DirectoryTreeSize {
     <#
     .SYNOPSIS
@@ -289,6 +317,7 @@ Function Get-DirectoryTreeSize {
 $ScriptPath = $script:MyInvocation.MyCommand.Path
 
 Set-Item Alias:cd Set-Location-MyEnhance
+Remove-Item Alias:wget
 Set-Alias cdt Get-LocationTrace
 Update-TypeData -AppendPath $ScriptPath\\..\\type\\fileTypeEnhance.ps1xml # -verbose
 
