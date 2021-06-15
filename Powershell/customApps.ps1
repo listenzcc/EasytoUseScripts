@@ -170,9 +170,15 @@ function Get-LocationTrace {
     # the default $path value will be null,
     # thus the location will be not changed
     $select = Read-Host -Prompt 'CD to'
-    $path = $lst[$lst.Length - $select]
-    Write-Output $path
-    Set-Location-MyEnhance $path
+    # Add the If-option to keep the folder if nothing is selected.
+    if ($select) {
+        $path = $lst[$lst.Length - $select]
+        # Write-Output $path
+        Set-Location-MyEnhance $path
+    }
+    else {
+        Write-Output 'Select Nothing.'
+    }
 }
 
 Function Get-DirectoryTreeSize {
@@ -312,6 +318,42 @@ Function Get-DirectoryTreeSize {
 
     END {}
 
+}
+
+
+$getExtensions = {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+    Get-ChildItem -Recurse -Depth 1 -File | Where-Object { $_.FullName -NotLike '*\.*' } | Select-Object Extension | Sort-Object Extension | get-unique -AsString | Where-Object { $_.Extension -like "$wordToComplete*" } | ForEach-Object { $_.Extension }
+}
+Register-ArgumentCompleter -CommandName Get-FilesByExtension -ParameterName 'Extension' -ScriptBlock $getExtensions
+
+function Get-FilesByExtension {
+    # Binding Parameters
+    [CmdletBinding()]
+    param(
+        [Parameter(
+            Position = 0
+        )]
+        [string] $Extension
+        , $Depth = 2
+        , $Exclude = ""
+    )
+
+    # Echo the Current Job
+    Write-Output "Selecting Extension of $Extension"
+
+    # If Extension is Empty, all the Available Extension are listed
+    if ($Extension -eq "") {
+        Get-ChildItem -Recurse -Depth $Depth -File | Where-Object { $_.FullName -NotLike '*\.*' } | Group-Object Extension | Sort-Object Count
+        return
+    }
+
+    # If Extension is Inputed, all the Files with the Extension are listed
+    $all = Get-ChildItem -Recurse -Depth $Depth -File | Where-Object { $_.FullName -NotLike '*\.*' } | Select-Object FullName, Name, LastWriteTime, Extension | Group-Object Extension
+
+    $select = $all | Where-Object { $_.Name -like $Extension } | Select-Object Group
+
+    $select.Group | Select-Object Name, LastWriteTime, fullname, extension | Sort-Object LastWriteTime
 }
 
 $ScriptPath = $script:MyInvocation.MyCommand.Path
